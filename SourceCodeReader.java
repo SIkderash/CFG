@@ -17,21 +17,53 @@ import java.util.Scanner;
  */
 public class SourceCodeReader {
 
-    public static void main(String[] args) {
-        File file = new File("input.txt");
-        Scanner scan = new Scanner("file");
+    public SourceCodeReader(String s) throws FileNotFoundException{
+      
+        File file = new File(s);
+        Scanner scan = new Scanner(file);
+        ArrayList<String> Lines = new ArrayList<>();
         ArrayList<String> Statements = new ArrayList<>();
-        if (file.exists()) {
+        ArrayList<Node>Graph = new ArrayList<>();
+        AllMethods Al = new AllMethods();
+        
+        int statementNo = 1;
+        Node parentNode= null;
+        Node ParentOfBranch = null;
             while (scan.hasNextLine()) {
-                Statements.add(scan.nextLine());
+                String currentLine = scan.nextLine();
+                Lines.add(currentLine);
+                if(Al.isStatement(currentLine)){
+                    Statements.add(currentLine);
+                    Node node = new Node(statementNo, currentLine);
+                    node.parents.add(parentNode);
+                    parentNode.childs.add(node);
+                    parentNode = node;
+                    Graph.add(node);
+                    statementNo++;
+                }
+                else if(true){
+                    if(Al.isIf(currentLine)){
+                        ParentOfBranch = parentNode;
+                        while(scan.hasNextLine()){
+                            
+                        }
+                    }
+                }
             }
+           
+            
 
-            for (int i = 0; i < Statements.size(); i++) {
-                System.out.println(Statements.get(i));
+            /*for (int i = 0; i < Statements.size(); i++) {
+               System.out.println(Statements.get(i));
+            }*/
+            for (int i = 0; i < Graph.size(); i++) {
+                System.out.print("Node: "+ Graph.get(i).nodeNumber+"\t");
+                System.out.println(Graph.get(i).Statement+ "\n");
             }
-        } else {
-            System.out.println("File Not Found");
-        }
+            
+            
+     
+        
     }
-
 }
+    
