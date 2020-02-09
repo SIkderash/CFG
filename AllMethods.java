@@ -4,12 +4,18 @@
  * and open the template in the editor.
  */
 package cfg;
+import java.util.regex.PatternSyntaxException;
 
 /**
  *
  * @author sikde
  */
 public class AllMethods {
+    
+    
+    public boolean isStatement(String s){
+        return (s.charAt(s.length()-1)==':');
+    }
     public boolean isIf(String s){
         return s.matches("^(\\s)*if(\\s)*"+"(");//^(\\s)*
     }
@@ -26,7 +32,9 @@ public class AllMethods {
     public boolean isFor(String s){
         return s.matches("^(//s)*for(//s)*"+"(");
     }
-    
+    public boolean foundEnd(String s){
+        return s.matches("}");
+    }
     
     
 }
