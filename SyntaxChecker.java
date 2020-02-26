@@ -13,27 +13,27 @@ import java.util.regex.PatternSyntaxException;
 public class SyntaxChecker {
     
     
-    public boolean isStatement(String s){
-        return (s.charAt(s.length()-1)==':');
+    public boolean isStatement(String statement){
+        return (statement.charAt(statement.length()-1)==':');
     }
-    public boolean isIf(String s){
-        return s.matches("^(\\s)*if(\\s)*"+"(");//^(\\s)*
+    public boolean isIf(String statement){
+        return statement.matches("^(\\s)*if(\\s)*"+"(");//^(\\s)*
     }
     
-    public boolean isElseIf(String s){
-        return s.matches("^(\\s)*else(\\s)*if(\\s)*"+"(");
+    public boolean isElseIf(String statement){
+        return statement.matches("^(\\s)*else(\\s)*if(\\s)*"+"(");
     }
-    public boolean isElse(String s){
-        return s.matches("^(\\s)*else(\\s)*"+"{");
+    public boolean isElse(String statement){
+        return statement.matches("^(\\s)*else(\\s)*"+"{");
     }
-    public boolean isWhile(String s){
-        return s.matches("^(//s)*while(\\s)*"+"(");
+    public boolean isWhile(String statement){
+        return statement.matches("^(//s)*while(\\s)*"+"(");
     }
-    public boolean isFor(String s){
-        return s.matches("^(//s)*for(//s)*"+"(");
+    public boolean isFor(String statement){
+        return statement.matches("^(//s)*for(//s)*"+"(");
     }
-    public boolean foundEnd(String s){
-        return s.matches("}");
+    public boolean foundEnd(String statement){
+        return statement.matches("}");
     }
     
     
