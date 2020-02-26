@@ -10,7 +10,7 @@ import java.util.regex.PatternSyntaxException;
  *
  * @author sikde
  */
-public class AllMethods {
+public class SyntaxChecker {
     
     
     public boolean isStatement(String s){
