@@ -24,7 +24,7 @@ public class SourceCodeReader {
         ArrayList<String> Lines = new ArrayList<>();
         ArrayList<String> Statements = new ArrayList<>();
       
-        AllMethods Al = new AllMethods();
+        SyntaxChecker CheckSyntax = new SyntaxChecker();
         
         
         while (scan.hasNextLine()) {
