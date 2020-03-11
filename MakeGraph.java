@@ -12,67 +12,64 @@ import java.util.Stack;
  *
  * @author sikde
  */
-public class makeGraph {
+public class MakeGraph {
 
     ArrayList<String> Graph = new ArrayList<>();
     ArrayList<String> Lines = new ArrayList<>();
-    int statementNo = 1;
-    Node parentNode = null;
-    Node parentOfBranch = null;
-    int iterator_1 = 0, iterator_2 = 0;
-    SyntaxChecker CheckSyntax = newSyntaxChecker();
-    Stack<Integer> stack = new Stack<Integer>();
+    
+    int iteratorOfLines = 0, iterator_2 = 0;
+    SyntaxChecker CheckSyntax = new SyntaxChecker();
+    Stack stackOfParentNodes = new Stack(); 
 
-    public makeGraph(ArrayList<String> Lins) {
-        for (int i = 0; i < Lins.size(); i++) {
-            this.Lines.add(Lins.get(i));
+    public MakeGraph(ArrayList<String> LinesOfTheSourceCode) {
+        for (int i = 0; i < LinesOfTheSourceCode.size(); i++) {
+            this.Lines.add(LinesOfTheSourceCode.get(i));
         }
     }
 
     public void makeRelations()
     {
-        while (iterator_1 < Lines.size()) {
-
-            String currentLine = Lines.get(iterator_1);
-            iterator_1++;
+         int statementNo = 0;
+         String currentLine = Lines.get(iteratorOfLines);
+          
+         Node root = new Node(statementNo,currentLine);
+         stackOfParentNodes.add(root);
+         Node currentNode = root;
+          
+        while (!stackOfParentNodes.empty()) {
+           
+            currentLine = Lines.get(iteratorOfLines);
             if (CheckSyntax.isStatement(currentLine)) {
-                Node node = new Node(statementNo, currentLine);
-                node.parents.add(parentNode);
-                parentNode.childs.add(node);
-                parentNode = node;
-                Graph.add(currentLine);
-                statementNo++;
+               
+               
+                Node node = new Node(statementNo++, currentLine);
+                Node parent = currentNode;
+                parent.childs.add(node);
+                node.parents.add(parent);
+                currentNode = node;
+            }
+            else if(CheckSyntax.foundEnd(currentLine)){
+                stackOfParentNodes.pop();
             }
             //System.out.println(currentLine+"\n");
-            if (CheckSyntax.isIf(currentLine)) {
-                parentOfBranch = parentNode;
-                stack.push(parentOfBranch.nodeNumber);
-                while (!stack.empty()) {
-                    currentLine = Lines.get(iterator_1);
-                    iterator_1++;
-                    if(CheckSyntax.foundEnd(currentLine)){
-                        stack.pop();
-                        continue;
-                    }
-                    else if (CheckSyntax.isStatement(currentLine)) {
-                        Node node = new Node(statementNo, currentLine);
-                        parentNode = new Node(stack.peek(),Graph.get(stack.peek()));
-                        node.parents.add(parentNode);
-                        parentNode.childs.add(node);
-                        parentNode = node;
-                        Graph.add(currentLine);
-                        statementNo++;
-                    }
-                    else if(CheckSyntax.isIf(currentLine))
-                }
-
+            else if (CheckSyntax.isIf(currentLine)) {
+                stackOfParentNodes.add(currentNode);
             }
+            else if(CheckSyntax.isElseIf(currentLine)){
+                continue;
+            }
+            else if(CheckSyntax.isFor(currentLine)){
+                stackOfParentNodes.add(currentNode);
+            }
+            else if(CheckSyntax.isWhile(currentLine)){
+                stackOfParentNodes.add(currentNode);
+            }
+             iteratorOfLines++;
 
         }
-        for (int i = 0; i < Graph.size(); i++) {
-            System.out.print(Graph.get(i)+ "\t");
-        }
+        
 
     }
+    
 
 }
