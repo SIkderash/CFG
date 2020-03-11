@@ -32,7 +32,7 @@ public class SourceCodeReader {
                 Lines.add(currentLine);
                 
             }
-         makeGraph MG = new makeGraph(Lines);   
+         makeGraph Graph = new makeGraph(Lines);   
            
             
 
