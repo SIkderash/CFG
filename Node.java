@@ -17,9 +17,9 @@ public class Node {
     ArrayList<Node>parents = new ArrayList<>();
     ArrayList<Node>childs = new ArrayList<>();
     
-    public Node(int no, String st){
-        this.nodeNumber = no;
-        this.Statement = st;
+    public Node(int nodeNo, String nodeStatement){
+        this.nodeNumber = nodeNo;
+        this.Statement = nodeStatement;
     }
     
     public void setParent(Node pr){
