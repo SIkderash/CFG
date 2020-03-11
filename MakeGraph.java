@@ -20,7 +20,7 @@ public class makeGraph {
     Node parentNode = null;
     Node parentOfBranch = null;
     int iterator_1 = 0, iterator_2 = 0;
-    AllMethods Al = new AllMethods();
+    SyntaxChecker CheckSyntax = newSyntaxChecker();
     Stack<Integer> stack = new Stack<Integer>();
 
     public makeGraph(ArrayList<String> Lins) {
@@ -35,7 +35,7 @@ public class makeGraph {
 
             String currentLine = Lines.get(iterator_1);
             iterator_1++;
-            if (Al.isStatement(currentLine)) {
+            if (CheckSyntax.isStatement(currentLine)) {
                 Node node = new Node(statementNo, currentLine);
                 node.parents.add(parentNode);
                 parentNode.childs.add(node);
@@ -44,17 +44,17 @@ public class makeGraph {
                 statementNo++;
             }
             //System.out.println(currentLine+"\n");
-            if (Al.isIf(currentLine)) {
+            if (CheckSyntax.isIf(currentLine)) {
                 parentOfBranch = parentNode;
                 stack.push(parentOfBranch.nodeNumber);
                 while (!stack.empty()) {
                     currentLine = Lines.get(iterator_1);
                     iterator_1++;
-                    if(Al.foundEnd(currentLine)){
+                    if(CheckSyntax.foundEnd(currentLine)){
                         stack.pop();
                         continue;
                     }
-                    else if (Al.isStatement(currentLine)) {
+                    else if (CheckSyntax.isStatement(currentLine)) {
                         Node node = new Node(statementNo, currentLine);
                         parentNode = new Node(stack.peek(),Graph.get(stack.peek()));
                         node.parents.add(parentNode);
@@ -63,7 +63,7 @@ public class makeGraph {
                         Graph.add(currentLine);
                         statementNo++;
                     }
-                    else if(Al.isIf(currentLine))
+                    else if(CheckSyntax.isIf(currentLine))
                 }
 
             }
