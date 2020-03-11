@@ -13,17 +13,23 @@ import java.util.Stack;
  * @author sikde
  */
 public class MakeGraph {
-
-    ArrayList<String> Graph = new ArrayList<>();
+    
     ArrayList<String> Lines = new ArrayList<>();
     
-    int iteratorOfLines = 0, iterator_2 = 0;
+    int iteratorOfLines = 0;
     SyntaxChecker CheckSyntax = new SyntaxChecker();
-    Stack stackOfParentNodes = new Stack(); 
+    Stack stackOfParentNodes = new Stack();
+    Node root;
+    ArrayList<Integer>graph = new ArrayList<>();
 
+    /**
+     *
+     * @param LinesOfTheSourceCode
+     */
     public MakeGraph(ArrayList<String> LinesOfTheSourceCode) {
         for (int i = 0; i < LinesOfTheSourceCode.size(); i++) {
             this.Lines.add(LinesOfTheSourceCode.get(i));
+            System.out.println(Lines.get(i));
         }
     }
 
@@ -31,10 +37,17 @@ public class MakeGraph {
     {
          int statementNo = 0;
          String currentLine = Lines.get(iteratorOfLines);
+         while(!CheckSyntax.isStatement(currentLine) && iteratorOfLines<Lines.size()){
+            
+             currentLine = Lines.get(iteratorOfLines);
+              iteratorOfLines++;
+     
+         }
           
-         Node root = new Node(statementNo,currentLine);
+         root = new Node(statementNo,currentLine);
          stackOfParentNodes.add(root);
          Node currentNode = root;
+         System.out.println(currentNode.nodeNumber + "->  " + currentNode.Statement);
           
         while (!stackOfParentNodes.empty()) {
            
@@ -42,18 +55,21 @@ public class MakeGraph {
             if (CheckSyntax.isStatement(currentLine)) {
                
                
-                Node node = new Node(statementNo++, currentLine);
+                Node node = new Node(++statementNo, currentLine);
                 Node parent = currentNode;
                 parent.childs.add(node);
                 node.parents.add(parent);
                 currentNode = node;
+                System.out.println(currentNode.nodeNumber + "->  " + currentNode.Statement);
             }
             else if(CheckSyntax.foundEnd(currentLine)){
                 stackOfParentNodes.pop();
+                System.out.println(currentLine);
             }
             //System.out.println(currentLine+"\n");
             else if (CheckSyntax.isIf(currentLine)) {
                 stackOfParentNodes.add(currentNode);
+                System.out.println("if->  " + currentLine);
             }
             else if(CheckSyntax.isElseIf(currentLine)){
                 continue;
@@ -68,7 +84,29 @@ public class MakeGraph {
 
         }
         
+        
+        
 
+    }
+    public void printGraph(){
+        print(root);
+        for(int i=0; i<this.graph.size(); i++){
+            //System.out.println("x");
+            System.out.print(graph.get(i));
+            
+        }
+        
+    }
+    public void print(Node traversingNode){
+       //System.out.println("y");
+      
+         if(!traversingNode.childs.isEmpty()){
+         for(int i=0; i<traversingNode.childs.size(); i++){
+             Node child = traversingNode.childs.get(i);
+             this.graph.add(traversingNode.nodeNumber);
+             print(child);
+         }   
+        }
     }
     
 
