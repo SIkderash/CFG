@@ -14,26 +14,33 @@ public class SyntaxChecker {
     
     
     public boolean isStatement(String statement){
-        return (statement.charAt(statement.length()-1)==':');
+        statement = statement.replaceAll("\\s","");
+        return (statement.charAt(statement.length()-1)==';');
     }
     public boolean isIf(String statement){
-        return statement.matches("^(\\s)*if(\\s)*"+"(");//^(\\s)*
+        statement = statement.replaceAll("\\s","");
+        return statement.contains("if(");//^(\\s)*
     }
     
     public boolean isElseIf(String statement){
-        return statement.matches("^(\\s)*else(\\s)*if(\\s)*"+"(");
+        statement = statement.replaceAll("\\s","");
+        return statement.contains("elseif{");
     }
     public boolean isElse(String statement){
-        return statement.matches("^(\\s)*else(\\s)*"+"{");
+        statement = statement.replaceAll("\\s","");
+        return statement.contains("else{");
     }
     public boolean isWhile(String statement){
-        return statement.matches("^(//s)*while(\\s)*"+"(");
+        statement = statement.replaceAll("\\s","");
+        return statement.contains("while(");
     }
     public boolean isFor(String statement){
-        return statement.matches("^(//s)*for(//s)*"+"(");
+        statement = statement.replaceAll("\\s","");
+        return statement.contains("for(");
     }
     public boolean foundEnd(String statement){
-        return statement.matches("}");
+        statement = statement.replaceAll("\\s","");
+        return statement.contains("}");
     }
     
     
