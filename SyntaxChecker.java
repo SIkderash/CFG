@@ -42,6 +42,18 @@ public class SyntaxChecker {
         statement = statement.replaceAll("\\s","");
         return statement.contains("}");
     }
+    public boolean contains(String Line, String literal){
+        int literalIterator = 1;
+        for(int LineIterator= 0;  LineIterator< Line.length();  LineIterator++){
+            if(Line.charAt(LineIterator)==literal.charAt(literalIterator)){
+                literalIterator++;
+                if(literalIterator> literal.length()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
     
 }
