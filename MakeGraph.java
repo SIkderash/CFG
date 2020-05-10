@@ -56,6 +56,8 @@ public class MakeGraph {
          Node branchParentStored = root;
          ArrayList<Node>branchLeaves = new ArrayList<>();
          boolean inBranch = false;
+         
+         
         while (!stackOfParentNodes.empty()) {
             
             currentLine = Lines.get(iteratorOfLines);
@@ -122,33 +124,53 @@ public class MakeGraph {
     }
     public void printGraph(){
         //System.out.print(root.Statement + "\n");
-        if(root!=null){q.add(root);}
-        print(root);
-        
-    }
-    public void print(Node traversingNode){
-       //System.out.println("y");
-       Node imaginary_root = new Node(-1,"");
+        if(root!=null){
+            Node imaginary_root = new Node(-1,"");
        imaginary_root.childs.add(root);                                                                                                      ;
        ArrayList<Node> temp1 = new ArrayList<>();
        temp1.add(imaginary_root);
        graph.add(temp1);
+            print(imaginary_root);
+        }
+        else{
+            System.err.println("Graph Has No Nodes\n\n");
+        }
+        
+        
+    }
+    public void print(Node traversingNode){
+       //System.out.println("y");
+       q.add(traversingNode);
+       
        while(!q.isEmpty()){
            ArrayList<Node> temp = new ArrayList<>();
          for(int i=0; i<q.peek().childs.size(); i++){
              temp.add(q.peek().childs.get(i));
              q.add(q.peek().childs.get(i));
          }
-         Node remNode = q.poll();
+         
          graph.add(temp);
+         q.poll();
     }
        for(int i=0; i<graph.size(); i++){
+             for(int j=0; j<graph.get(i).size(); j++)
+             {
+                 System.out.print("childs of"+" "+i+" "+graph.get(i).get(j).nodeNumber+" ");
+             }
+             
+             System.out.print("\n");
+         }
+       //System.out.print(imaginary_root.nodeNumber+"    "+ imaginary_root.childs.get(0).nodeNumber+"\n");
+       
+      /* for(int i=0; i<graph.size(); i++){
            System.out.print(i + "\t");
            for(int j=1; j<graph.get(i).size(); j++){
               System.out.print(graph.get(i).get(j).nodeNumber + " ");
            }
            System.out.println();
-       }
+       }*/
+       
+       
        DrawGraph DG = new DrawGraph(graph);
        DG.draw();
        
