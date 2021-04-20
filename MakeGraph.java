@@ -144,7 +144,7 @@ public class MakeGraph {
     public void printGraph (){
         
         for(int i=0; i<Lines.size(); i++){
-            System.out.print(i+"   ->");
+            System.out.print(i+"   ->    ");
             for(int j=0; j<Lines.size(); j++){
                 if(adj[i][j]==1){
                     System.out.print(j+" ");
