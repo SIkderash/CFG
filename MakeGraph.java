@@ -40,11 +40,11 @@ public class MakeGraph {
         
         System.out.println("root " + root.nodeNumber +" "+ root.Statement);
         
-        makeRelations(root);
+        makeRelations(root, false);
         
         dfs(root, -1);
     }
-    public void makeRelations(Node branchRoot){
+    public void makeRelations(Node branchRoot, boolean loop){
         Node par = branchRoot;
         //System.out.println(cur);
         ArrayList<Node> branchingsOfThisBranch = new ArrayList<>();
@@ -59,7 +59,7 @@ public class MakeGraph {
             par.childs.add(curNode);
             branchingsOfThisBranch.add(curNode);
             cur++;
-            makeRelations(curNode);
+            makeRelations(curNode, false);
         }
         
         else if(checker.isElseIf(curNode.Statement)){
@@ -68,7 +68,7 @@ public class MakeGraph {
             par.childs.add(curNode);
             branchingsOfThisBranch.add(curNode);
             cur++;
-            makeRelations(curNode);
+            makeRelations(curNode, false);
         }
         
         else if(checker.isIf(curNode.Statement)){
@@ -85,7 +85,23 @@ public class MakeGraph {
             }
             branchingsOfThisBranch.add(curNode);
             cur++;
-            makeRelations(curNode);
+            makeRelations(curNode, false);
+        }
+        else if(checker.isFor(curNode.Statement)|| checker.isWhile(curNode.Statement)){
+            //System.out.println("If - "+ curNode.Statement);
+            
+            if(branchingsOfThisBranch.size()>0){
+                for(int i=0; i<branchingsOfThisBranch.size(); i++){
+                    branchingsOfThisBranch.get(i).childs.add(curNode);
+                    branchingsOfThisBranch.clear();
+                }
+            }
+            else{
+                par.childs.add(curNode);
+            }
+            branchingsOfThisBranch.add(curNode);
+            cur++;
+            makeRelations(curNode, true);
         }
         
         else{
@@ -101,7 +117,10 @@ public class MakeGraph {
             }
             //branchingsOfThisBranch.add(curNode);
             cur++;
-            if(checker.foundEnd(curNode.Statement)) return;
+            if(checker.foundEnd(curNode.Statement)){
+                curNode.childs.add(branchRoot);
+                return;
+            }
             par= curNode; 
         }
            
