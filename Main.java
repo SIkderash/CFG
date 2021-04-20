@@ -17,13 +17,8 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         System.out.println("Control Flow Graph\n\n");
        System.out.println("Enter the directory of a C source code file\n");
-       Scanner scan = new Scanner(System.in);
-       String fileName = scan.nextLine();
-       SourceCodeReader Sc = new SourceCodeReader(fileName);
-       
-  
-        
-                
-    }
-    
+       String fileName;
+       SourceCodeReader Sc;                
+       Sc = new SourceCodeReader("F:\\Downloads\\CFG-master\\test.txt");
+    }  
 }
