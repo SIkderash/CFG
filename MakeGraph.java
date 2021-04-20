@@ -16,164 +16,122 @@ import java.util.Stack;
  */
 public class MakeGraph {
     
-    ArrayList<String> Lines = new ArrayList<>();   //Canprint all nodes
+    ArrayList<String>Lines;
+    boolean vis[];
+    int[][] adj = new int[50][50];
+    SyntaxChecker checker = new SyntaxChecker();
+    int cur = 0;
     
-    int iteratorOfLines = 0;
-    int statementNo ;
-    SyntaxChecker CheckSyntax = new SyntaxChecker();
-    Stack stackOfParentNodes = new Stack();
-    Node root;
-    ArrayList<ArrayList<Node> >graph = new ArrayList<ArrayList<Node>>();
-    Queue<Node> q = new LinkedList<>();
-    
-
-    /**
-     *
-     * @param LinesOfTheSourceCode
-     */
-    public MakeGraph(ArrayList<String> LinesOfTheSourceCode) {
-        for (int i = 0; i < LinesOfTheSourceCode.size(); i++) {
-            this.Lines.add(LinesOfTheSourceCode.get(i));
-            System.out.println(Lines.get(i));
-        }
+    public MakeGraph (ArrayList<String> lines){
+        this.Lines = lines;
+        vis = new boolean[Lines.size()];
+        for(int i=0; i<Lines.size(); i++) System.out.println(i+ " " + Lines.get(i));
     }
-
-    public void makeRelations()
-    {
-          statementNo =0;
-         String currentLine = Lines.get(iteratorOfLines);
-         while(!CheckSyntax.isStatement(currentLine) && iteratorOfLines<Lines.size()){
+    
+    public void start(){
+        cur=0;
+        
+        while(Lines.get(cur).contains("int main(){") || Lines.get(cur).charAt(0)=='#'){
+            cur++;
+        }
+        
+        Node root = new Node(cur,Lines.get(cur));
+        cur++;
+        
+        System.out.println("root " + root.nodeNumber +" "+ root.Statement);
+        
+        makeRelations(root);
+        
+        dfs(root, -1);
+    }
+    public void makeRelations(Node branchRoot){
+        Node par = branchRoot;
+        //System.out.println(cur);
+        ArrayList<Node> branchingsOfThisBranch = new ArrayList<>();
+        
+        while(cur<Lines.size()) {
+        //System.out.println("finished " + cur);
+        Node curNode = new Node(cur,Lines.get(cur));
+        
+        if(checker.isElse(curNode.Statement)){
+            //System.out.println("Else - "+ curNode.Statement);
             
-             currentLine = Lines.get(iteratorOfLines);
-              iteratorOfLines++;
-     
-         }
-          
-         root = new Node(statementNo,currentLine);
-         stackOfParentNodes.add(root);
-         Node currentNode = root;
-         System.out.println(currentNode.nodeNumber + "->  " + currentNode.Statement);
-         Node branchParentStored = root;
-         ArrayList<Node>branchLeaves = new ArrayList<>();
-         boolean inBranch = false;
-         
-         
-        while (!stackOfParentNodes.empty()) {
+            par.childs.add(curNode);
+            branchingsOfThisBranch.add(curNode);
+            cur++;
+            makeRelations(curNode);
+        }
+        
+        else if(checker.isElseIf(curNode.Statement)){
+            //System.out.println("Else If - "+ curNode.Statement);
             
-            currentLine = Lines.get(iteratorOfLines);
-            if (CheckSyntax.isStatement(currentLine)) {
-               
-                Node node = new Node(++statementNo, currentLine);
-                Node parent = currentNode;
-                parent.childs.add(node);
-                node.parents.add(parent);
-                currentNode = node;
-                if(!inBranch && !branchLeaves.isEmpty() ){
-                    for(int i=0; i<branchLeaves.size(); i++){
-                        node.parents.add(branchLeaves.get(i));
-                    }
-                }
-                System.out.println(currentNode.nodeNumber + "->  " + currentNode.Statement);
-            }
-            else if(CheckSyntax.foundEnd(currentLine)){
-                branchParentStored = (Node) stackOfParentNodes.peek();
-                System.out.println("BranchParentStored " + branchParentStored.nodeNumber + "->  " + branchParentStored.Statement);
-                stackOfParentNodes.pop();
-                System.out.println(currentLine);
-                if(inBranch==true){
-                    branchLeaves.add(currentNode);
+            par.childs.add(curNode);
+            branchingsOfThisBranch.add(curNode);
+            cur++;
+            makeRelations(curNode);
+        }
+        
+        else if(checker.isIf(curNode.Statement)){
+            //System.out.println("If - "+ curNode.Statement);
+            
+            if(branchingsOfThisBranch.size()>0){
+                for(int i=0; i<branchingsOfThisBranch.size(); i++){
+                    branchingsOfThisBranch.get(i).childs.add(curNode);
+                    branchingsOfThisBranch.clear();
                 }
             }
-            //System.out.println(currentLine+"\n");
-            else if (CheckSyntax.isIf(currentLine)) {
-                inBranch = true;
-                stackOfParentNodes.add(currentNode);
-                branchParentStored = (Node) stackOfParentNodes.peek();
-                System.out.println("if->  " + currentLine);
+            else{
+                par.childs.add(curNode);
             }
-            else if(CheckSyntax.isElseIf(currentLine)){
-                inBranch = true;
-                stackOfParentNodes.add(branchParentStored);
-                currentNode = branchParentStored;
-                System.out.println("else if->  " + currentLine);
-               
-            }
-            else if(CheckSyntax.isElse(currentLine)){
-                inBranch = true;
-                stackOfParentNodes.add(branchParentStored);
-                currentNode = branchParentStored;
-                System.out.println("else->  " + currentLine);
-               
-            }
-            
-            else if(CheckSyntax.isFor(currentLine)){
-                stackOfParentNodes.add(currentNode);
-                System.out.println("for->  " + currentLine);
-            }
-            else if(CheckSyntax.isWhile(currentLine)){
-                stackOfParentNodes.add(currentNode);
-                System.out.println("while->  " + currentLine);
-            }
-             iteratorOfLines++;
-
+            branchingsOfThisBranch.add(curNode);
+            cur++;
+            makeRelations(curNode);
         }
         
-        
-        
-
-    }
-    public void printGraph(){
-        //System.out.print(root.Statement + "\n");
-        if(root!=null){
-            Node imaginary_root = new Node(-1,"");
-       imaginary_root.childs.add(root);                                                                                                      ;
-       ArrayList<Node> temp1 = new ArrayList<>();
-       temp1.add(imaginary_root);
-       graph.add(temp1);
-            print(imaginary_root);
-        }
         else{
-            System.err.println("Graph Has No Nodes\n\n");
+            //System.out.println("Statement - "+ curNode.Statement+branchingsOfThisBranch.size());
+             if(branchingsOfThisBranch.size()>0){
+                for(int i=0; i<branchingsOfThisBranch.size(); i++){
+                    branchingsOfThisBranch.get(i).childs.add(curNode);
+                }
+                branchingsOfThisBranch.clear();
+            }
+            else{
+                par.childs.add(curNode);
+            }
+            //branchingsOfThisBranch.add(curNode);
+            cur++;
+            if(checker.foundEnd(curNode.Statement)) return;
+            par= curNode; 
+        }
+           
+        }
+    }
+    public void dfs(Node cur, int prev){
+        //System.out.println(prev + " " + cur.nodeNumber+" "+cur.Statement);
+        vis[cur.nodeNumber] = true;
+        
+        for(int i=0; i<cur.childs.size(); i++){
+            int nodeNo = cur.childs.get(i).nodeNumber;
+            if(vis[nodeNo]==false){
+                dfs(cur.childs.get(i), cur.nodeNumber);
+            }
         }
         
+        for(int i=0; i<cur.childs.size(); i++){
+            adj[cur.nodeNumber][cur.childs.get(i).nodeNumber] = 1;
+        }
+    }
+    public void printGraph (){
         
+        for(int i=0; i<Lines.size(); i++){
+            System.out.print(i+"   ->");
+            for(int j=0; j<Lines.size(); j++){
+                if(adj[i][j]==1){
+                    System.out.print(j+" ");
+                }
+            }
+            System.out.println();
+        }
     }
-    public void print(Node traversingNode){
-       //System.out.println("y");
-       q.add(traversingNode);
-       
-       while(!q.isEmpty()){
-           ArrayList<Node> temp = new ArrayList<>();
-         for(int i=0; i<q.peek().childs.size(); i++){
-             temp.add(q.peek().childs.get(i));
-             q.add(q.peek().childs.get(i));
-         }
-         
-         graph.add(temp);
-         q.poll();
-    }
-       for(int i=0; i<graph.size(); i++){
-             for(int j=0; j<graph.get(i).size(); j++)
-             {
-                 System.out.print("childs of"+" "+i+" "+graph.get(i).get(j).nodeNumber+" ");
-             }
-             
-             System.out.print("\n");
-         }
-       //System.out.print(imaginary_root.nodeNumber+"    "+ imaginary_root.childs.get(0).nodeNumber+"\n");
-       
-      /* for(int i=0; i<graph.size(); i++){
-           System.out.print(i + "\t");
-           for(int j=1; j<graph.get(i).size(); j++){
-              System.out.print(graph.get(i).get(j).nodeNumber + " ");
-           }
-           System.out.println();
-       }*/
-       
-       
-       DrawGraph DG = new DrawGraph(graph);
-       DG.draw();
-       
-    }
-
 }
