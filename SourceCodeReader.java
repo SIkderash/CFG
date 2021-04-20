@@ -22,22 +22,19 @@ public class SourceCodeReader {
         File file = new File(s);
         Scanner scan = new Scanner(file);
         ArrayList<String> Lines = new ArrayList<>();
-        ArrayList<String> Statements = new ArrayList<>();
-      
-        SyntaxChecker CheckSyntax = new SyntaxChecker();
-        
         
         while (scan.hasNextLine()) {
                 String currentLine = scan.nextLine();
                 Lines.add(currentLine);
                 
-            }
-         makeGraph Graph = new makeGraph(Lines);   
-           
+        }
+         MakeGraph Graph = new MakeGraph(Lines);   
+         Graph.start();
+         Graph.printGraph();
             
 
-            /*for (int i = 0; i < Statements.size(); i++) {
-               System.out.println(Statements.get(i));
+            /*for (int i = 0; i < Lines.size(); i++) {
+               System.out.println(Lines.get(i));
             }*/
             
             
