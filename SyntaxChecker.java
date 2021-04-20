@@ -24,7 +24,7 @@ public class SyntaxChecker {
     
     public boolean isElseIf(String statement){
         statement = statement.replaceAll("\\s","");
-        return statement.contains("elseif{");
+        return  statement.contains("else") && statement.contains("if(");
     }
     public boolean isElse(String statement){
         statement = statement.replaceAll("\\s","");
@@ -45,3 +45,4 @@ public class SyntaxChecker {
     
     
 }
+
