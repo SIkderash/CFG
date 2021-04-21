@@ -1,89 +1,119 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cfg;
-
-/**
- *
- * @author Asus
- */
-import javax.swing.*;
-import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.beans.EventHandler;
+import static java.lang.Integer.max;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
-
-public class DrawGraph {
-     public ArrayList<ArrayList<Node>>graph = new  ArrayList<>(); 
-     
-     
-    public DrawGraph(ArrayList<ArrayList<Node>> graph){
-          this.graph.addAll(graph);
-    }
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+//sample class
+public class DrawGraph extends Application {
+    
+    int[] level = new int[100];
+    int maxLevel;
+    int source;
+    int[][] adj = new int[100][100];
+    int numberOfNodes;
+    ArrayList<ArrayList<Integer> > nodesInLevel = new ArrayList<>();
     
     
-    public void draw(){
-        
-        JFrame f1 = new JFrame("Control Flow Graph");
-        f1.setBackground(Color.BLUE);
-        f1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        JPanel p1 = new JPanel();
-        
-        int constx = 0, consty = 10, width = 10, height = 5;
-        
-        Queue<Node>q = new LinkedList<>();
-        for(int i=0; i<graph.size(); i++){
-            System.out.print(i+"-> ");
-             for(int j=0; j<graph.get(i).size(); j++)
-             {
-                 System.out.print(graph.get(i).get(j).nodeNumber+" ");
-             }
-             
-             System.out.print("\n");
-         }
-        
-        q.add(graph.get(1).get(0));
-              
-        System.out.print(graph.get(1).get(0).nodeNumber);
-        JButton b = new JButton(Integer.toString(graph.get(1).get(0).nodeNumber));
-                b.setBackground(Color.yellow);
-                b.setBounds(constx, consty, (int)width, height);
-                p1.add(b);
-        int x = constx, y = consty;
+    public void bfs(int source){
+        this.source = source;
+        boolean[] vis = new boolean[100];
+        Queue<Integer> q = new LinkedList<>();
+        q.add(source);
+        vis[source] = true;
+        level[source] = 0;
         while(!q.isEmpty()){
-            int i;
-            int node_num = q.peek().nodeNumber;
-            System.out.print(q.peek().nodeNumber+"\n");
-            
-            for(i=0; i<graph.get(node_num+2).size(); i++){
-                JButton button = new JButton(Integer.toString(graph.get(node_num+2).get(i).nodeNumber));
-                button.setBackground(Color.yellow);
-                button.setBounds(x, y, (int) width, height);
-                p1.add(button);
-                q.add(graph.get(node_num+2).get(i));
-                if(i==graph.get(node_num+2).size()/2){
-                    i++;
-                    break;
+            int cur = q.peek();
+            /*
+            System.out.println("QueueTop "+ cur);
+            //System.out.println(numberOfNodes);
+            System.out.print("ADJ of " + cur + "    ");
+            */
+            for(int i=0; i<numberOfNodes; i++){
+                if(adj[cur][i]==1 && vis[i] == false){
+                    //System.out.print(i +" ");
+                    vis[i] = true;
+                    q.add(i);
+                    level[i] = level[cur] + 1;
+                    maxLevel = max(maxLevel, level[i]);
+                    //System.out.println("Node " + i +" LEVEL " + level[i]);
                 }
-                x-=10;
-            }
-            for(i=i; i<graph.get(node_num+2).size(); i++){
-                JButton button = new JButton(Integer.toString(graph.get(node_num+2).get(i).nodeNumber));
-                button.setBackground(Color.yellow);
-                button.setBounds(x, y, (int) width, height);
-                p1.add(button);
-                q.add(graph.get(node_num+2).get(i));
-                x+=10;
             }
             q.poll();
-            y+=120;
         }
+    }
+    void printLeveledGraph(){
         
-        f1.add(p1);
-        f1.setSize(2000,900);
-        f1.setVisible(true);
+        System.out.println(maxLevel);
+        for(int i=0; i<=maxLevel; i++){
+            ArrayList<Integer> thisLevel = new ArrayList<>();
+            //System.out.println("LEVEL "+i);
+             for(int j=0; j<numberOfNodes; j++){
+                 if(j!=source && level[j]==0) continue;
+                 if(level[j]==i){
+                     thisLevel.add(j);
+                 }
+             }
+             
+             if(!thisLevel.isEmpty()) {
+                 nodesInLevel.add(thisLevel);
+             }
+             
+        
+        }
+        for(int i=0; i<nodesInLevel.size(); i++){
+            System.out.println("Level "+i);
+             for(int j=0; j<nodesInLevel.get(i).size(); j++){
+                 System.out.println(nodesInLevel.get(i).get(j)+" ");
+            }
+        }
+    }
+    
+    
+    
+    
+    @Override
+    public void start(Stage primaryStage)  {
+    //create a stackpane
+        Pane root = new Pane();
+        int y = 10;
+        for(int i=0; i<nodesInLevel.size(); i++){
+            int x = 100;
+            for(int j=0; j<nodesInLevel.get(i).size(); j++){
+                Button btn = new Button();
+                btn.setText(Integer.toString(j));
+                btn.setLayoutX(x);
+                btn.setLayoutY(y);
+                btn.setMaxSize(50, 50);
+                root.getChildren().add(btn);
+                x+=50;
+            } 
+            y+=10;
+        }
+       
+        primaryStage.setScene(new Scene(root, 1024, 768));
+        primaryStage.show();
+    }
+    //main method
+    public void drawGraphWithAjacencyMatrix(int[][] inputAdj, int numberOfNodes, int source) {
+        this.numberOfNodes = numberOfNodes;
+        for(int i=0; i<numberOfNodes; i++){
+            for(int j=0; j<numberOfNodes; j++){
+                this.adj[i][j] = inputAdj[i][j];
+            }
+        }
+        bfs(source);
+        printLeveledGraph();
+        launch();
     }
 }
+
+// for nicely plotting use leveled Grpah and for back edges, use adjacency matrix
