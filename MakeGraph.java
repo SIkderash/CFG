@@ -43,11 +43,16 @@ public class MakeGraph {
         makeRelations(root, false);
         
         dfs(root, -1);
+        DrawGraph draw = new DrawGraph();
+        draw.drawGraphWithAjacencyMatrix(adj,cur+1,root.nodeNumber);
     }
-    public void makeRelations(Node branchRoot, boolean loop){
+    
+    
+    public void makeRelations(Node branchRoot, boolean inLoop){
         Node par = branchRoot;
         //System.out.println(cur);
         ArrayList<Node> branchingsOfThisBranch = new ArrayList<>();
+        //System.out.println(branchRoot.nodeNumber+" "+inLoop);
         
         while(cur<Lines.size()) {
         //System.out.println("finished " + cur);
@@ -62,6 +67,12 @@ public class MakeGraph {
             makeRelations(curNode, false);
         }
         
+        
+        
+        
+        
+        
+        
         else if(checker.isElseIf(curNode.Statement)){
             //System.out.println("Else If - "+ curNode.Statement);
             
@@ -70,6 +81,11 @@ public class MakeGraph {
             cur++;
             makeRelations(curNode, false);
         }
+        
+        
+        
+        
+        
         
         else if(checker.isIf(curNode.Statement)){
             //System.out.println("If - "+ curNode.Statement);
@@ -87,8 +103,14 @@ public class MakeGraph {
             cur++;
             makeRelations(curNode, false);
         }
-        else if(checker.isFor(curNode.Statement)|| checker.isWhile(curNode.Statement)){
-            //System.out.println("If - "+ curNode.Statement);
+        
+        
+        
+        
+        
+        
+        else if(checker.isLoop(curNode.Statement)){
+            //System.out.println("loop - "+ curNode.Statement);
             
             if(branchingsOfThisBranch.size()>0){
                 for(int i=0; i<branchingsOfThisBranch.size(); i++){
@@ -104,6 +126,11 @@ public class MakeGraph {
             makeRelations(curNode, true);
         }
         
+        
+        
+        
+        
+        
         else{
             //System.out.println("Statement - "+ curNode.Statement+branchingsOfThisBranch.size());
              if(branchingsOfThisBranch.size()>0){
@@ -118,14 +145,28 @@ public class MakeGraph {
             //branchingsOfThisBranch.add(curNode);
             cur++;
             if(checker.foundEnd(curNode.Statement)){
-                curNode.childs.add(branchRoot);
+                if(inLoop==true) {
+                    System.out.println(curNode.nodeNumber);
+                    System.out.println(branchRoot);
+                    curNode.childs.add(branchRoot);
+                }
                 return;
             }
-            par= curNode; 
+            par = curNode; 
         }
            
+        
+        
+        
+        
+        
+        
+        
         }
     }
+    
+    
+    
     public void dfs(Node cur, int prev){
         //System.out.println(prev + " " + cur.nodeNumber+" "+cur.Statement);
         vis[cur.nodeNumber] = true;
@@ -144,7 +185,7 @@ public class MakeGraph {
     public void printGraph (){
         
         for(int i=0; i<Lines.size(); i++){
-            System.out.print(i+"   ->    ");
+            System.out.print(i+"   ->");
             for(int j=0; j<Lines.size(); j++){
                 if(adj[i][j]==1){
                     System.out.print(j+" ");
@@ -153,4 +194,5 @@ public class MakeGraph {
             System.out.println();
         }
     }
+    
 }
