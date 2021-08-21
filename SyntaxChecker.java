@@ -38,11 +38,23 @@ public class SyntaxChecker {
         statement = statement.replaceAll("\\s","");
         return statement.contains("for(");
     }
+    public boolean isLoop(String statement){                        //"for(" nowt working, so instead using for
+        statement = statement.replaceAll("\\s","");
+        if(statement.length()<4) return false;
+        //System.out.println("check " + statement);
+        if(statement.contains("for")){
+            return true;
+        }
+        if(statement.length()<5) return false;
+        if(statement.contains("while")){
+            return true;
+        }
+        return false;
+    }
     public boolean foundEnd(String statement){
         statement = statement.replaceAll("\\s","");
         return statement.contains("}");
     }
-    
-    
+      
 }
 
