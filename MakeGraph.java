@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package cfg;
-
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -23,17 +23,12 @@ public class MakeGraph {
     int[][] adj = new int[50][50];
     SyntaxChecker checker = new SyntaxChecker();
     int cur = 0;
-    
-    
     //Constructor to pass the lines of code
-  
     public MakeGraph (ArrayList<String> lines){
         this.Lines = lines;
         vis = new boolean[Lines.size()];
         //for(int i=0; i<Lines.size(); i++) System.out.println(i+ " " + Lines.get(i));
     }
-    
-    //Finding the first statement to be the root node and Starting the algorithm with the root node
     
     public void start() throws IOException{
         cur=0;
@@ -50,14 +45,17 @@ public class MakeGraph {
         makeRelations(root, false);
         
         dfs(root, -1);
+        printGraph();
+        saveGraph();
         //DrawGraph draw = new DrawGraph();
         //nodesInLevel = draw.drawGraphWithAjacencyMatrix(adj,cur+1,root.nodeNumber);
         //System.out.println("nodesInLevel has currently size "+ nodesInLevel.size());
+        ConnectedNodes drawGraph = new ConnectedNodes();
+        drawGraph.main();
     }
     
-    //Function that creates relations/edges
     
-    public Node makeRelations(Node branchRoot, boolean inLoop){         //bool variable inloop helps to determine if we should have a backEdge, which is caused only by loops
+    public Node makeRelations(Node branchRoot, boolean inLoop){
         Node par = branchRoot;
         //System.out.println(cur);
         ArrayList<Node> branchingsOfThisBranch = new ArrayList<>();
@@ -72,7 +70,7 @@ public class MakeGraph {
             
             par.childs.add(curNode);
             cur++;
-            branchingsOfThisBranch.add(makeRelations(curNode, false)); //to store the branchings that is to be connected later with a node that all branches merge to
+            branchingsOfThisBranch.add(makeRelations(curNode, false));
         }
         
         
@@ -86,7 +84,7 @@ public class MakeGraph {
             
             par.childs.add(curNode);
             cur++;
-            branchingsOfThisBranch.add(makeRelations(curNode, false)); //to store the branchings that is to be connected later with a node that all branches merge to
+            branchingsOfThisBranch.add(makeRelations(curNode, false));
         }
         
         
@@ -99,7 +97,7 @@ public class MakeGraph {
             
             if(branchingsOfThisBranch.size()>0){
                 for(int i=0; i<branchingsOfThisBranch.size(); i++){
-                    branchingsOfThisBranch.get(i).childs.add(curNode); //Establishing connections between the branching nodes and the node that all branches merge to
+                    branchingsOfThisBranch.get(i).childs.add(curNode);
                     branchingsOfThisBranch.clear();
                 }
             }
@@ -107,7 +105,7 @@ public class MakeGraph {
                 par.childs.add(curNode);
             }
             cur++;
-            branchingsOfThisBranch.add(makeRelations(curNode, false)); //to store the branchings that is to be connected later with a node that all branches merge to
+            branchingsOfThisBranch.add(makeRelations(curNode, false));
         }
         
         
@@ -120,7 +118,7 @@ public class MakeGraph {
             
             if(branchingsOfThisBranch.size()>0){
                 for(int i=0; i<branchingsOfThisBranch.size(); i++){
-                    branchingsOfThisBranch.get(i).childs.add(curNode); //Establishing connections between the loop node and the first node after the loop execution 
+                    branchingsOfThisBranch.get(i).childs.add(curNode);
                     branchingsOfThisBranch.clear();
                 }
             }
@@ -172,7 +170,7 @@ public class MakeGraph {
     
     
     
-    public void dfs(Node cur, int prev){                                                // to create the adjacency Matrix
+    public void dfs(Node cur, int prev){
         //System.out.println(prev + " " + cur.nodeNumber+" "+cur.Statement);
         vis[cur.nodeNumber] = true;
         
@@ -188,7 +186,7 @@ public class MakeGraph {
         }
     }
     
-    public void printGraph (){                                                          //to Print the graph (AdjacencyList view and AdjacencyMatrix view
+    public void printGraph (){
         System.out.println("\nAdjacency List:");
         for(int i=0; i<Lines.size(); i++){
             System.out.print("\t"+i+"  ->   ");
@@ -206,6 +204,18 @@ public class MakeGraph {
                 System.out.print(adj[i][j]+" ");
             }
             System.out.println();
+        }
+    }
+    public void saveGraph() throws IOException{
+        try (FileWriter myWriter = new FileWriter("F:\\Downloads\\CFG-master\\Edges.txt")) {
+            myWriter.write((Lines.size())+"\n");
+            for(int i=0; i<Lines.size(); i++){
+                for(int j=0; j<Lines.size(); j++){
+                    if(adj[i][j]==1){
+                        myWriter.write(i+" "+j+"\n");
+                    }
+                }
+            }
         }
     }
     
