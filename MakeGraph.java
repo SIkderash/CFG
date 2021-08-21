@@ -5,6 +5,7 @@
  */
 package cfg;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -17,18 +18,19 @@ import java.util.Stack;
 public class MakeGraph {
     
     ArrayList<String>Lines;
+    ArrayList<ArrayList<Integer> > nodesInLevel = new ArrayList<>();
     boolean vis[];
     int[][] adj = new int[50][50];
     SyntaxChecker checker = new SyntaxChecker();
     int cur = 0;
-    
+    //Constructor to pass the lines of code
     public MakeGraph (ArrayList<String> lines){
         this.Lines = lines;
         vis = new boolean[Lines.size()];
         for(int i=0; i<Lines.size(); i++) System.out.println(i+ " " + Lines.get(i));
     }
     
-    public void start(){
+    public void start() throws IOException{
         cur=0;
         
         while(Lines.get(cur).contains("int main(){") || Lines.get(cur).charAt(0)=='#'){
@@ -44,11 +46,12 @@ public class MakeGraph {
         
         dfs(root, -1);
         DrawGraph draw = new DrawGraph();
-        draw.drawGraphWithAjacencyMatrix(adj,cur+1,root.nodeNumber);
+        nodesInLevel = draw.drawGraphWithAjacencyMatrix(adj,cur+1,root.nodeNumber);
+        //System.out.println("nodesInLevel has currently size "+ nodesInLevel.size());
     }
     
     
-    public void makeRelations(Node branchRoot, boolean inLoop){
+    public Node makeRelations(Node branchRoot, boolean inLoop){
         Node par = branchRoot;
         //System.out.println(cur);
         ArrayList<Node> branchingsOfThisBranch = new ArrayList<>();
@@ -62,9 +65,8 @@ public class MakeGraph {
             //System.out.println("Else - "+ curNode.Statement);
             
             par.childs.add(curNode);
-            branchingsOfThisBranch.add(curNode);
             cur++;
-            makeRelations(curNode, false);
+            branchingsOfThisBranch.add(makeRelations(curNode, false));
         }
         
         
@@ -77,9 +79,8 @@ public class MakeGraph {
             //System.out.println("Else If - "+ curNode.Statement);
             
             par.childs.add(curNode);
-            branchingsOfThisBranch.add(curNode);
             cur++;
-            makeRelations(curNode, false);
+            branchingsOfThisBranch.add(makeRelations(curNode, false));
         }
         
         
@@ -99,9 +100,8 @@ public class MakeGraph {
             else{
                 par.childs.add(curNode);
             }
-            branchingsOfThisBranch.add(curNode);
             cur++;
-            makeRelations(curNode, false);
+            branchingsOfThisBranch.add(makeRelations(curNode, false));
         }
         
         
@@ -150,19 +150,18 @@ public class MakeGraph {
                     System.out.println(branchRoot);
                     curNode.childs.add(branchRoot);
                 }
-                return;
+                return curNode;
             }
-            par = curNode; 
+            par = curNode;
         }
            
         
         
         
-        
-        
-        
+            
         
         }
+        return null;
     }
     
     
@@ -182,10 +181,11 @@ public class MakeGraph {
             adj[cur.nodeNumber][cur.childs.get(i).nodeNumber] = 1;
         }
     }
+    
     public void printGraph (){
         
         for(int i=0; i<Lines.size(); i++){
-            System.out.print(i+"   ->");
+            System.out.print(i+"  ->   ");
             for(int j=0; j<Lines.size(); j++){
                 if(adj[i][j]==1){
                     System.out.print(j+" ");
