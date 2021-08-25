@@ -34,7 +34,7 @@ class graphicNode1 extends Button {
     public double dragBaseX;
     public double dragBaseY;
 
-    public graphicNode1(double centerX, double centerY, double radius) {
+    public graphicNode1(double centerX, double centerY) {
         //super(centerX, centerY, radius);
         setLayoutX(centerX);
         setLayoutY(centerY);
@@ -71,32 +71,41 @@ public class ConnectedNodes1 extends Application {
     }
     
     private void initGraph(Group root) throws FileNotFoundException {
-        File file = new File("F:\\Downloads\\CFG-master\\Edges.txt");
+        File file = new File("F:\\Downloads\\CFG-master\\LeveledNodes.txt");
         Scanner scan = new Scanner(file);
-        
-        double R = 20;
-        Random rnd = new Random();
         
         int numberOfNodes = 0;
         HashMap<Integer, graphicNode1> map = new HashMap<>();
+        int[] numberofNodesInLevel = new int[50];
         
         numberOfNodes = scan.nextInt();
         System.out.println(numberOfNodes);
         
-        for(int nodeNumber = 2; nodeNumber<=numberOfNodes+1; nodeNumber++){
-            graphicNode1 curNode = new graphicNode1(rnd.nextDouble()*1400,rnd.nextDouble()*400,R);
+        while(scan.hasNextInt()){
+            int nodeNumber = scan.nextInt();
+            int levelOfCurNode = scan.nextInt();
+            if(levelOfCurNode>=100000000){
+                continue;
+            }
+            int thisLevelAlreadyHasNodes = numberofNodesInLevel[levelOfCurNode];
+            numberofNodesInLevel[levelOfCurNode]++;
+            int adjustor = thisLevelAlreadyHasNodes;
+            graphicNode1 curNode = new graphicNode1(100*(adjustor+1), levelOfCurNode*100);
             curNode.setText(Integer.toString(nodeNumber));
             map.put(nodeNumber, curNode);
             root.getChildren().add(curNode);
         }
-        while(scan.hasNextInt()){
+        
+        File file2 = new File("F:\\Downloads\\CFG-master\\Edges.txt");
+        Scanner scan2 = new Scanner(file2);
+        while(scan2.hasNextInt()){
             
-            int source = scan.nextInt();
-            int dest = scan.nextInt();
+            int source = scan2.nextInt();
+            int dest = scan2.nextInt();
             
             graphicNode1 tmp = map.get(source);
             //System.out.println(tmp.centerXProperty());
-            //System.out.println(source + " " + dest);
+            //System.out.println("X " + source + " " + dest);
 
             Edge1 connection = new Edge1(map.get(source),map.get(dest));
             connection.setStroke(Color.CYAN);
