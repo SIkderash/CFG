@@ -45,12 +45,13 @@ public class MakeGraph {
         makeRelations(root, false);
         
         dfs(root, -1);
+        bfs(root);
         printGraph();
         saveGraph();
         //DrawGraph draw = new DrawGraph();
         //nodesInLevel = draw.drawGraphWithAjacencyMatrix(adj,cur+1,root.nodeNumber);
         //System.out.println("nodesInLevel has currently size "+ nodesInLevel.size());
-        ConnectedNodes drawGraph = new ConnectedNodes();
+        ConnectedNodes1 drawGraph = new ConnectedNodes1();
         drawGraph.main();
     }
     
@@ -185,7 +186,32 @@ public class MakeGraph {
             adj[cur.nodeNumber][cur.childs.get(i).nodeNumber] = 1;
         }
     }
-    
+    public void bfs(Node root) throws IOException{
+        int[] level = new int[50];
+        for(int i=0; i<50; i++) level[i] = 100000000;
+        
+        level[root.nodeNumber] = 1;
+        Queue<Integer>q = new LinkedList<>();
+        q.add(root.nodeNumber);
+        while(!q.isEmpty()){
+            int cur = q.peek();
+            q.poll();
+            for(int i=0; i<50; i++){
+                if(adj[cur][i]==1 && level[i]>level[cur]+1){
+                    level[i] = level[cur]+1;
+                    //System.out.println(i + " " + level[i]);
+                    q.add(i);
+                }
+            }
+        }
+        try (FileWriter myWriter = new FileWriter("F:\\Downloads\\CFG-master\\LeveledNodes.txt")) {
+            myWriter.write((Lines.size())+"\n");
+            for(int i=0; i<Lines.size(); i++){
+                myWriter.write(i + " " + level[i]+"\n");
+            }
+        }
+        
+    }
     public void printGraph (){
         System.out.println("\nAdjacency List:");
         for(int i=0; i<Lines.size(); i++){
@@ -208,7 +234,7 @@ public class MakeGraph {
     }
     public void saveGraph() throws IOException{
         try (FileWriter myWriter = new FileWriter("F:\\Downloads\\CFG-master\\Edges.txt")) {
-            myWriter.write((Lines.size())+"\n");
+            //myWriter.write((Lines.size())+"\n");
             for(int i=0; i<Lines.size(); i++){
                 for(int j=0; j<Lines.size(); j++){
                     if(adj[i][j]==1){
