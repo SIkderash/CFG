@@ -5,9 +5,9 @@
  */
 package cfg;
 
-import java.beans.Statement;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -17,7 +17,7 @@ import java.util.Scanner;
  */
 public class SourceCodeReader {
 
-    public SourceCodeReader(String s) throws FileNotFoundException{
+    public SourceCodeReader(String s) throws FileNotFoundException, IOException{
       
         File file = new File(s);
         Scanner scan = new Scanner(file);
@@ -25,21 +25,18 @@ public class SourceCodeReader {
         
         while (scan.hasNextLine()) {
                 String currentLine = scan.nextLine();
-                Lines.add(currentLine);
-                
+                currentLine = currentLine.replaceAll("\\s","");
+                if(currentLine.length()!=0) Lines.add(currentLine);   
         }
          MakeGraph Graph = new MakeGraph(Lines);   
          Graph.start();
-         Graph.printGraph();
+         //Graph.printGraph();
             
 
             /*for (int i = 0; i < Lines.size(); i++) {
                System.out.println(Lines.get(i));
             }*/
-            
-            
-     
-        
+      
     }
 }
     
