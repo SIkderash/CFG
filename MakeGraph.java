@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Stack;
 
 /**
  *
@@ -18,10 +17,9 @@ import java.util.Stack;
 public class MakeGraph {
     
     ArrayList<String>Lines;
-    ArrayList<ArrayList<Integer> > nodesInLevel = new ArrayList<>();
     boolean vis[];
     int[][] adj = new int[50][50];
-    SyntaxChecker checker = new SyntaxChecker();
+    SyntaxIdentifier checker = new SyntaxIdentifier();
     int cur = 0;
     //Constructor to pass the lines of code
     public MakeGraph (ArrayList<String> lines){
@@ -33,14 +31,14 @@ public class MakeGraph {
     public void start() throws IOException{
         cur=0;
         
-        while(Lines.get(cur).contains("int main(){") || Lines.get(cur).charAt(0)=='#'){
+        while(Lines.get(cur).contains("intmain(){") || Lines.get(cur).charAt(0)=='#' || (Lines.get(cur).charAt(0)=='/' && Lines.get(cur).charAt(0)=='/')){
             cur++;
         }
         
         Node root = new Node(cur,Lines.get(cur));
         cur++;
         
-        System.out.println("root node no: " + root.nodeNumber +"\n"+ "root node statement: "+root.Statement);
+        System.out.println("\n\n\nroot node no: " + root.nodeNumber +"\n"+ "root node statement: "+root.Statement);
         
         makeRelations(root, false);
         
@@ -51,7 +49,7 @@ public class MakeGraph {
         //DrawGraph draw = new DrawGraph();
         //nodesInLevel = draw.drawGraphWithAjacencyMatrix(adj,cur+1,root.nodeNumber);
         //System.out.println("nodesInLevel has currently size "+ nodesInLevel.size());
-        ConnectedNodes1 drawGraph = new ConnectedNodes1();
+        Draw drawGraph = new Draw();
         drawGraph.main();
     }
     
@@ -151,8 +149,6 @@ public class MakeGraph {
             cur++;
             if(checker.foundEnd(curNode.Statement)){
                 if(inLoop==true) {
-                    //System.out.println(curNode.nodeNumber);
-                    //System.out.println(branchRoot);
                     curNode.childs.add(branchRoot);
                 }
                 return curNode;
@@ -186,6 +182,7 @@ public class MakeGraph {
             adj[cur.nodeNumber][cur.childs.get(i).nodeNumber] = 1;
         }
     }
+    
     public void bfs(Node root) throws IOException{
         int[] level = new int[50];
         for(int i=0; i<50; i++) level[i] = 100000000;
