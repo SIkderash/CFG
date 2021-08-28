@@ -52,7 +52,7 @@ class Edge1 extends Line {
     }
 }
 
-public class ConnectedNodes1 extends Application {
+public class Draw extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
