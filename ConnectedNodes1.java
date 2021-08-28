@@ -12,7 +12,6 @@ package cfg;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -20,15 +19,11 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
-import java.util.Random;
 import java.util.Scanner;
 import static javafx.application.Application.launch;
-import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
-import javafx.util.Pair;
 
 class graphicNode1 extends Button {
     public double dragBaseX;
