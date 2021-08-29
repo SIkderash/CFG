@@ -25,8 +25,8 @@ public class SourceCodeReader {
         
         while (scan.hasNextLine()) {
                 String currentLine = scan.nextLine();
-                currentLine = currentLine.replaceAll("\\s","");
-                if(currentLine.length()!=0) Lines.add(currentLine);   
+                //currentLine = currentLine.replaceAll("\\s","");
+                Lines.add(currentLine);   
         }
          MakeGraph Graph = new MakeGraph(Lines);   
          Graph.start();
