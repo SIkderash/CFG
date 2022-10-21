@@ -97,8 +97,8 @@ public class MakeGraph {
             if(branchingsOfThisBranch.size()>0){
                 for(int i=0; i<branchingsOfThisBranch.size(); i++){
                     branchingsOfThisBranch.get(i).childs.add(curNode);
-                    branchingsOfThisBranch.clear();
                 }
+                branchingsOfThisBranch.clear();
             }
             else{
                 par.childs.add(curNode);
@@ -118,8 +118,8 @@ public class MakeGraph {
             if(branchingsOfThisBranch.size()>0){
                 for(int i=0; i<branchingsOfThisBranch.size(); i++){
                     branchingsOfThisBranch.get(i).childs.add(curNode);
-                    branchingsOfThisBranch.clear();
                 }
+                branchingsOfThisBranch.clear();
             }
             else{
                 par.childs.add(curNode);
